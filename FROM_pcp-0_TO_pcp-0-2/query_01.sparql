@@ -9,7 +9,7 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 
 CONSTRUCT   {
-  ?nesubject rdf:type pcp:Lecturer.
+  ?newsubject rdf:type pcp:Lecturer.
   ?newsubject pcp:gnd ?gnd.
   ?newsubject pcp:Birth ?uri_gnd_birth.
   ?newsubject pcp:Birth ?uri_pcp_birth.
