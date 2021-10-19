@@ -1,6 +1,3 @@
-#FROM: 
-#TO: 
-
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 PREFIX pcp0: <http://purl.org/pcp-on-web/ontology#> 
 PREFIX pcp: <http://pcp-on-web.de/ontology#> 
@@ -31,6 +28,7 @@ WHERE {
 		OPTIONAL {?gnd <http://d-nb.info/standards/elementset/gnd#placeOfBirth> ?gnd_placeOfBirth.}
     	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_gnd_birth)
   }
+# FROM SOURCES
   OPTIONAL {
     	?subject pcp0:hasPeriod ?period.
     	?period a pcp0:Birth. 
