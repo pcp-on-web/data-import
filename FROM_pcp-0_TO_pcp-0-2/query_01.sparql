@@ -1,3 +1,6 @@
+# This Query imports generell attributes and stage of life attributs of an Lecturer
+
+
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 PREFIX pcp0: <http://purl.org/pcp-on-web/ontology#> 
 PREFIX pcp: <http://pcp-on-web.de/ontology#> 
@@ -6,14 +9,19 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
 
 CONSTRUCT   {
+
+	# Lecturer
   ?newsubject rdf:type pcp:Lecturer.
+  ?newsubject pcp:derivedFrom ?subject.
   ?newsubject pcp:gnd ?gnd.
-  ?newsubject pcp:Birth ?uri_pcp_birth.
   ?newsubject rdfs:label ?label .
+
+	#Birth
+  ?newsubject pcp:Birth ?uri_pcp_birth.
   ?uri_pcp_birth rdf:type pcp:Birth.
   ?uri_pcp_birth pcp:date ?pcp_dateOfBirth.
   ?uri_pcp_birth pcp:stageOfLifeLocation ?pcp_birthplace.
-  ?uri_pcp_birth pcp:derivedFrom data:dataset_pcp .
+  ?uri_pcp_birth pcp:derivedFrom ?period .
 }
 WHERE {
   ?subject a pcp0:Professor.
