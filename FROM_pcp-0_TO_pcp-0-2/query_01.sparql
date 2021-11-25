@@ -16,6 +16,22 @@ CONSTRUCT   {
   ?newsubject pcp:gnd ?gnd.
   ?newsubject rdfs:label ?label .
   ?newsubject pcp:note ?note .
+  ?newsubject pcp:furtherInformation ?furtherInformation .
+  ?newsubject ?gender pcp:Gender .
+	
+  ?newsubject pcp:idPerson ?idPerson .
+  ?newsubject pcp:additionToSurname ?additionToSurname .
+  ?newsubject pcp:alternativeWritingOfSurname ?alternativeWritingOfSurname .
+  ?newsubject pcp:birthname ?birthname .
+  ?newsubject pcp:corresponds ?corresponds .
+  ?newsubject pcp:forename ?forename .
+  ?newsubject pcp:hasEnrollment ?hasEnrollment .
+  ?newsubject pcp:hasOrigin ?hasOrigin .
+  ?newsubject pcp:isAttributedTo ?isAttributedTo .
+  ?newsubject pcp:latinForename ?latinForename .
+  ?newsubject pcp:latinSurname ?latinSurname .
+  ?newsubject pcp:surname ?surname .	
+	
   ?newsubject pcp:hasStageOfLife ?uri_pcp_birth.
   ?newsubject pcp:hasStageOfLife ?uri_pcp_picture.
 
@@ -47,10 +63,41 @@ WHERE {
     	?subject pcp0:note ?note.
   }
   OPTIONAL {
+    	?subject pcp0:furtherInformation ?furtherInformation.
+  }
+  OPTIONAL {
+    	?subject pcp0:gender ?gender_source.
+    	BIND(
+			IF ( contains(?gender_source,"female"), IRI(CONCAT(str(pcp:),'female')),
+        		IF (contains(?gender_source,"male"), IRI(CONCAT(str(pcp:),'male')), ''))  AS ?gender).
+    	FILTER isIRI(?gender).
+  }
+
+  optional {?subject pcp0:idPerson ?idPerson .}
+  optional {?subject pcp0:additionToSurname ?additionToSurname .}
+  optional {?subject pcp0:alternativeWritingOfSurname ?alternativeWritingOfSurname .}
+  optional {?subject pcp0:birthname ?birthname .}
+  optional {?subject pcp0:corresponds ?corresponds .}
+  optional {?subject pcp0:forename ?forename .}
+  optional {?subject pcp0:hasEnrollment ?hasEnrollment .}
+  optional {?subject pcp0:hasOrigin ?hasOrigin .}
+  optional {?subject pcp0:isAttributedTo ?isAttributedTo .}
+  optional {?subject pcp0:latinForename ?latinForename .}
+  optional {?subject pcp0:latinSurname ?latinSurname .}
+  optional {?subject pcp0:surname ?surname .}
+
+	
+	
+  OPTIONAL {
     ?subject pcp0:imageSource ?pictureURL.
   	OPTIONAL {?subject pcp0:imageSignature ?imageSignature.}
 	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
-	}
+  }
+  OPTIONAL {
+    ?subject pcp0:hasPicture ?pictureURL.
+  	OPTIONAL {?subject pcp0:imageSignature ?imageSignature.}
+	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
+  }
 	
   OPTIONAL {
     	?subject pcp0:hasPeriod ?period.
