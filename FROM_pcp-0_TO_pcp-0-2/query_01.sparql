@@ -31,7 +31,7 @@ CONSTRUCT   {
 }
 WHERE {
   ?subject a pcp0:Professor.
-  BIND (IRI(REPLACE(str(?subject),'http://aditus.catalogus-professorum.org/','data:')) AS ?newsubject). 
+  BIND (IRI(REPLACE(str(?subject),'http://aditus.catalogus-professorum.org/',str(data:))) AS ?newsubject). 
   OPTIONAL {?subject rdfs:label ?label.}
   FILTER contains (str(?subject),"lipsiensium").
   OPTIONAL {
@@ -48,7 +48,7 @@ WHERE {
   OPTIONAL {
     ?subject pcp0:imageSource ?pictureURL.
   	OPTIONAL {?subject pcp0:imageSignature ?imageSignature.}
-	BIND (IRI(CONCAT('data:', strUUID())) AS ?uri_pcp_picture)
+	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
 	}
 	
   OPTIONAL {
@@ -56,7 +56,7 @@ WHERE {
     	?period a pcp0:Birth. 
 	OPTIONAL {?period pcp0:date ?pcp_dateOfBirth.}
 	OPTIONAL {?period pcp0:periodPlace ?pcp_birthplace.}
-	BIND (IRI(CONCAT('data:', strUUID())) AS ?uri_pcp_birth)
+	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_birth)
   }
 }
 
