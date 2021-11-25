@@ -31,27 +31,29 @@ CONSTRUCT   {
 }
 WHERE {
   ?subject a pcp0:Professor.
-  BIND (IRI(REPLACE(str(?subject),'http://aditus.catalogus-professorum.org/',str(data:))) AS ?newsubject). 
+  BIND (IRI(REPLACE(str(?subject),'http://aditus.catalogus-professorum.org/','data:')) AS ?newsubject). 
   OPTIONAL {?subject rdfs:label ?label.}
+  FILTER contains (str(?subject),"lipsiensium").
   OPTIONAL {
-    	?subject pcp0:gnd ?gnd.
-  }
+    	?subject pcp0:gnd ?gnd_source.
+    	BIND( IF ( contains(?gnd_source,"http"), IRI(REPLACE(str(?gnd_source),'http://','https://')), IRI(CONCAT("https://d-nb.info/gnd/",?gnd_source)) ) AS ?gnd).
+    	}
+    	
   OPTIONAL {
     	?subject pcp0:note ?note.
   }
   OPTIONAL {
-    	?subject pcp0:imageSource ?pictureURL.
-	OPTIONAL {?subject pcp0:imageSignature ?imageSignature.}
-  }
-  BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
+    ?subject pcp0:imageSource ?pictureURL.
+  	OPTIONAL {?subject pcp0:imageSignature ?imageSignature.}
+	BIND (IRI(CONCAT('data:', strUUID())) AS ?uri_pcp_picture)
+	}
 	
   OPTIONAL {
     	?subject pcp0:hasPeriod ?period.
     	?period a pcp0:Birth. 
 	OPTIONAL {?period pcp0:date ?pcp_dateOfBirth.}
 	OPTIONAL {?period pcp0:periodPlace ?pcp_birthplace.}
+	BIND (IRI(CONCAT('data:', strUUID())) AS ?uri_pcp_birth)
   }
-  BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_birth)
 }
-
 
