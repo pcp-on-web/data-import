@@ -1,4 +1,4 @@
-# This Query imports generell attributes for objects pcp:Lecture
+# This Query imports generell attributes and stage of life attributs of an Lecturer as basic import
 
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> 
 PREFIX pcp0: <http://purl.org/pcp-on-web/ontology#> 
@@ -32,16 +32,25 @@ CONSTRUCT   {
   ?newsubject pcp:latinSurname ?latinSurname .
   ?newsubject pcp:surname ?surname .	
 	
+  ?newsubject pcp:hasStageOfLife ?uri_pcp_birth.
   ?newsubject pcp:hasStageOfLife ?uri_pcp_picture.
+
+#Picture
   ?uri_pcp_picture rdf:type pcp:Picture.
   ?uri_pcp_picture pcp:pictureLicense ?pictureLicense.
   ?uri_pcp_picture pcp:pictureURL ?pictureURL.
 
+#Birth
+  ?uri_pcp_birth rdf:type pcp:Birth.
+  ?uri_pcp_birth pcp:date ?pcp_dateOfBirth.
+  ?uri_pcp_birth pcp:stageOfLifeLocation ?pcp_birthplace.
+  ?uri_pcp_birth pcp:derivedFrom ?period .
 }
 WHERE {
   ?subject a pcp0:Professor.
   BIND (IRI(REPLACE(str(?subject),'http://aditus.catalogus-professorum.org/',str(data:))) AS ?newsubject). 
   OPTIONAL {?subject rdfs:label ?label.}
+# FILTER contains (str(?subject),"lipsiensium").
   OPTIONAL {
     	?subject pcp0:gnd ?gnd_source.
     	BIND(
@@ -90,5 +99,12 @@ WHERE {
 	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
   }
 	
+  OPTIONAL {
+    	?subject pcp0:hasPeriod ?period.
+    	?period a pcp0:Birth. 
+	OPTIONAL {?period pcp0:date ?pcp_dateOfBirth.}
+	OPTIONAL {?period pcp0:periodPlace ?pcp_birthplace.}
+	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_birth)
+  }
 }
 
