@@ -36,7 +36,10 @@ WHERE {
   FILTER contains (str(?subject),"lipsiensium").
   OPTIONAL {
     	?subject pcp0:gnd ?gnd_source.
-    	BIND( IF ( contains(?gnd_source,"http"), IRI(REPLACE(str(?gnd_source),'http://','https://')), IRI(CONCAT("https://d-nb.info/gnd/",?gnd_source)) ) AS ?gnd).
+    	BIND(
+      		IF ( contains(?gnd_source,"http"), IRI(REPLACE(str(?gnd_source),'http://','https://')),
+        		IF (contains(?gnd_source,"(DNB)"), IRI(CONCAT("https://d-nb.info/gnd/",REPLACE(?gnd_source," \\(DNB\\)",""))), ''))  AS ?gnd).
+    	FILTER isIRI(?gnd).
     	}
     	
   OPTIONAL {
