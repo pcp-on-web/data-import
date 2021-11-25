@@ -15,10 +15,15 @@ CONSTRUCT   {
   ?newsubject pcp:gnd ?gnd.
   ?newsubject rdfs:label ?label .
   ?newsubject pcp:note ?note .
+  ?newsubject pcp:hasStageOfLife ?uri_pcp_birth.
+  ?newsubject pcp:hasStageOfLife ?uri_pcp_picture.
 
+#Picture
+  ?uri_pcp_picture rdf:type pcp:Picture.
+  ?uri_pcp_picture pcp:pictureLicense ?pictureLicense.
+  ?uri_pcp_picture pcp:pictureURL ?pictureURL.
 
 #Birth
-  ?newsubject pcp:hasStageOfLife ?uri_pcp_birth.
   ?uri_pcp_birth rdf:type pcp:Birth.
   ?uri_pcp_birth pcp:date ?pcp_dateOfBirth.
   ?uri_pcp_birth pcp:stageOfLifeLocation ?pcp_birthplace.
@@ -35,11 +40,18 @@ WHERE {
     	?subject pcp0:note ?note.
   }
   OPTIONAL {
+    	?subject pcp0:imageSource ?pictureURL.
+	OPTIONAL {?subject pcp0:imageSignature ?imageSignature.}
+  }
+  BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
+	
+  OPTIONAL {
     	?subject pcp0:hasPeriod ?period.
     	?period a pcp0:Birth. 
-		  OPTIONAL {?period pcp0:date ?pcp_dateOfBirth.}
-		  OPTIONAL {?period pcp0:periodPlace ?pcp_birthplace.}
-		  }
-      	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_birth)
+	OPTIONAL {?period pcp0:date ?pcp_dateOfBirth.}
+	OPTIONAL {?period pcp0:periodPlace ?pcp_birthplace.}
+  }
+  BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_birth)
 }
+
 
