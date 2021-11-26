@@ -32,7 +32,7 @@ CONSTRUCT   {
   ?newsubject pcp:latinSurname ?latinSurname .
   ?newsubject pcp:surname ?surname .	
 	
-  ?newsubject pcp:hasStageOfLife ?uri_pcp_picture.
+  ?newsubject pcp:relatedDocument ?uri_pcp_picture.
   ?uri_pcp_picture rdf:type pcp:Picture.
   ?uri_pcp_picture pcp:pictureLicense ?pictureLicense.
   ?uri_pcp_picture pcp:pictureURL ?pictureURL.
