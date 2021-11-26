@@ -45,15 +45,17 @@ WHERE {
   OPTIONAL {
     	?subject pcp0:gnd ?gnd_source.
     	BIND(
-    	# IF(?),wahr, falsch
-    	
-      		IF ( contains(?gnd_source,"http"), IRI(REPLACE(str(?gnd_source),'http://','https://')),
-      			IF (contains(?gnd_source," "),
-      				IF (contains(?gnd_source,"(DNB)"), IRI(CONCAT("https://d-nb.info/gnd/",REPLACE(?gnd_source," \\(DNB\\)",""))), ''),
-      				IRI(CONCAT("https://d-nb.info/gnd/",?gnd_source)))
-        		))  AS ?gnd).
+    		IF ( contains(?gnd_source,"http"),
+        		 IRI(REPLACE(str(?gnd_source),'http://','https://')),
+        IF ( contains(?gnd_source," "),
+          IF (contains(?gnd_source,"(DNB)"), IRI(CONCAT("https://d-nb.info/gnd/",REPLACE(?gnd_source," \\(DNB\\)",""))), ?gnd_source),
+          
+          IRI(CONCAT("https://d-nb.info/gnd/","")))
+          			  
+        		) as ?gnd ).
+      			
     	FILTER isIRI(?gnd).
-    	}
+    	} 
     	
   OPTIONAL {
     	?subject pcp0:note ?note.
