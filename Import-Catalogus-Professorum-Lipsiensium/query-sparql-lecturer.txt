@@ -95,10 +95,10 @@ SERVICE <https://workbench.pcp-on-web.de/store-oker/catalogus-professorum-lipsie
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
       ?picture rdf:type cpm:Picture .
-  	BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
       OPTIONAL {?picture cpm:picture ?picture_url}.
       OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
       OPTIONAL {?picture cpm:pictureKey ?picture_key}.
+      BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
     }
   }
 }
