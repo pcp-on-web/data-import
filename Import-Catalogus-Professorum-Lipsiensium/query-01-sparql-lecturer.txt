@@ -18,31 +18,33 @@ CONSTRUCT   {
 ?lecturer rdfs:label ?label .
 ?lecturer pcp:note ?note .
 ?lecturer pcp:furtherInformation ?furtherInformation .
+?lecturer pcp:additionToSurname ?additionToSurname .
+?lecturer pcp:alternativeWritingOfSurname ?alternativeWritingOfSurname .
+?lecturer pcp:forename ?forename .
+?lecturer pcp:surname ?surname .
+?lecturer rdfs:seeAlso ?webLink .
+?lecturer rdfs:seeAlso ?seeAlso .
+?lecturer rdfs:seeAlso ?lectureLink .
 
 #  ?lecturer pcp:idPerson ?idPerson .
-?lecturer pcp:additionToSurname ?additionToSurname .
-#  ?lecturer pcp:alternativeWritingOfSurname ?alternativeWritingOfSurname .
 #  ?lecturer pcp:birthname ?birthname .
 #  ?lecturer pcp:corresponds ?corresponds .
-?lecturer pcp:forename ?forename .
 #  ?lecturer pcp:hasEnrollment ?hasEnrollment .
 #  ?lecturer pcp:hasOrigin ?hasOrigin .
 #  ?lecturer pcp:isAttributedTo ?isAttributedTo .
 #  ?lecturer pcp:latinForename ?latinForename .
 #  ?lecturer pcp:latinSurname ?latinSurname .
-?lecturer pcp:surname ?surname .
 
 ?lecturer pcp:relatedDocument ?uri_pcp_picture.
-?uri_pcp_picture rdf:type pcp:Picture.
-?uri_pcp_picture pcp:pictureURL ?picture_url.
-?uri_pcp_picture pcp:pictureArchive ?picture_pictureArchive.
-?uri_pcp_picture pcp:pictureKey ?picture_pictureKey.
-?uri_pcp_picture pcp:derivedFrom ?picture.
+?uri_pcp_picture rdf:type pcp:Picture;
+#?uri_pcp_picture pcp:pictureURL ?picture_url.
+#?uri_pcp_picture pcp:pictureArchive ?picture_pictureArchive.
+#?uri_pcp_picture pcp:pictureKey ?picture_pictureKey.
+#?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
 WHERE {
-
-SERVICE <https://workbench.pcp-on-web.de/store-oker/catalogus-professorum-lipsiensium/sparql> {
+  SELECT DISTINCT * {
   # get all professors
   ?professor a cpm:Professor.
   # generate new resource for lecture derived from this ?professor
@@ -90,13 +92,5 @@ SERVICE <https://workbench.pcp-on-web.de/store-oker/catalogus-professorum-lipsie
     FILTER isIRI(?gnd).
     }
 
-    #retrieve picture resources
-    OPTIONAL {
-      ?professor cpm:hasPicture ?picture.
-      OPTIONAL {?picture cpm:picture ?picture_url}.
-      OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
-      OPTIONAL {?picture cpm:pictureKey ?picture_key}.
-      BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture)
-    }
   }
 }

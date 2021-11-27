@@ -1,0 +1,38 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX pcp: <http://pcp-on-web.de/ontology#>
+PREFIX data: <http://data.pcp-on-web.de/v.1/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
+PREFIX cpl: <http://catalogus-professorum.org/>
+
+
+CONSTRUCT   {
+
+# Lecturer
+?lecturer rdf:type pcp:Lecturer.
+
+?lecturer pcp:relatedDocument ?uri_pcp_picture.
+?uri_pcp_picture rdf:type pcp:Picture.
+?uri_pcp_picture pcp:pictureURL ?picture_url.
+?uri_pcp_picture pcp:pictureArchive ?picture_archive.
+?uri_pcp_picture pcp:pictureKey ?picture_key.
+?uri_pcp_picture pcp:derivedFrom ?picture.
+
+}
+WHERE {
+ SELECT DISTINCT * {
+?professor a cpm:Professor.
+  # generate new resource for lecture derived from this ?professor
+  BIND (IRI(REPLACE(str(?professor),'http://catalogus-professorum.org/',str(data:))) AS ?lecturer).
+    #retrieve picture resources
+    OPTIONAL {
+      ?professor cpm:hasPicture ?picture.
+      BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture).
+      OPTIONAL {?picture cpm:picture ?picture_url}.
+      OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
+      OPTIONAL {?picture cpm:pictureKey ?picture_key}.
+
+    }
+  }
+}
