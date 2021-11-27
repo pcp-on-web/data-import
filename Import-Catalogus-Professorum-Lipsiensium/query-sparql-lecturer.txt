@@ -35,8 +35,8 @@ CONSTRUCT   {
 ?lecturer pcp:relatedDocument ?uri_pcp_picture.
 ?uri_pcp_picture rdf:type pcp:Picture.
 ?uri_pcp_picture pcp:pictureURL ?picture_url.
-?uri_pcp_picture pcp:pictureArchive ?picture_url.
-?uri_pcp_picture pcp:pictureKey ?picture_url.
+?uri_pcp_picture pcp:pictureArchive ?picture_pictureArchive.
+?uri_pcp_picture pcp:pictureKey ?picture_pictureKey.
 ?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
@@ -59,7 +59,6 @@ SERVICE <https://workbench.pcp-on-web.de/store-oker/catalogus-professorum-lipsie
   OPTIONAL {?professor cpm:references ?references.}
   OPTIONAL {?professor cpm:literature ?literature.}
   OPTIONAL {?professor cpm:alternativeWritingOfSurname ?alternativeWritingOfSurname.}
-  OPTIONAL {?professor cpm:hasPicture ?hasPicture.}
 
   #Link to lecture repository / Vorlesungsverzeichnis
   OPTIONAL {?professor cpm:lectureLink ?lectureLink.}
@@ -94,7 +93,6 @@ SERVICE <https://workbench.pcp-on-web.de/store-oker/catalogus-professorum-lipsie
     #retrieve picture resources
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
-      ?picture rdf:type cpm:Picture .
       OPTIONAL {?picture cpm:picture ?picture_url}.
       OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
       OPTIONAL {?picture cpm:pictureKey ?picture_key}.
