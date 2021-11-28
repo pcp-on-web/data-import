@@ -22,13 +22,18 @@ CONSTRUCT   {
 }
 WHERE {
  SELECT DISTINCT * {
-?professor a cpm:Professor.
+  ?professor a cpm:Professor.
+
   # generate new resource for lecture derived from this ?professor
   BIND (IRI(REPLACE(str(?professor),'http://catalogus-professorum.org/',str(data:))) AS ?lecturer).
+
     #retrieve picture resources
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
-      BIND (IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture).
+      SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
+        ?uri_exists pcp:derivedFrom ?picture .
+      }
+      BIND (IF( exists(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID())) AS ?uri_pcp_picture).
       OPTIONAL {?picture cpm:picture ?picture_url}.
       OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
       OPTIONAL {?picture cpm:pictureKey ?picture_key}.
