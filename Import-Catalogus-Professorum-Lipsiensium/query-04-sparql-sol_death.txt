@@ -30,10 +30,10 @@ WHERE { SELECT DISTINCT * {
           ?uri_exists pcp:derivedFrom ?period .
         }
       }
-      BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_?period)
+      BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
       OPTIONAL {?period cpm:date ?date.}
       OPTIONAL {?period cpm:periodPlace ?place.
-        OPTIONAL {?place rdfs:label ?place_label.}
+      OPTIONAL {?place rdfs:label ?place_label.}
       }
 
     }
