@@ -30,10 +30,13 @@ WHERE {
     #retrieve picture resources
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
-      SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
-        ?uri_exists pcp:derivedFrom ?picture .
+
+      OPTIONAL {
+        SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
+          ?uri_exists pcp:derivedFrom ?picture .
+        }
       }
-      BIND (IF( contains(str(?uri_exists).'http'),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture).
+      BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
       OPTIONAL {?picture cpm:picture ?picture_url}.
       OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
       OPTIONAL {?picture cpm:pictureKey ?picture_key}.
