@@ -13,8 +13,10 @@ CONSTRUCT   {
 ?uri_period rdf:type pcp:Birth.
 ?uri_period pcp:derivedFrom ?period.
 ?uri_period pcp:date ?date.
-?uri_period pcp:stageOfLifeLocation ?place.
-?place rdfs:label ?place_label.
+?uri_period pcp:stageOfLifeLocation ?uri_place.
+?uri_place rdfs:label ?place_label.
+?uri_place pcp:derivedFrom ?place.
+?uri_place rdf:type pcp:Location.
 
 }
 WHERE { SELECT DISTINCT * {
@@ -35,6 +37,12 @@ WHERE { SELECT DISTINCT * {
 
       OPTIONAL {?period cpm:date ?date.}
       OPTIONAL {?period cpm:periodPlace ?place.
+      OPTIONAL {
+        SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
+          ?uri_exists2 pcp:derivedFrom ?place .
+        }
+      }
+      BIND (IF (BOUND(?uri_exists2),?uri_exists2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_place)
       OPTIONAL {?place rdfs:label ?place_label.}
       }
 
