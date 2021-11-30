@@ -32,7 +32,8 @@ WHERE {
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
 
-      OPTIONAL {?uri_exists pcp:derivedFrom ?picture . }
+      #select from default graph
+      OPTIONAL { SELECT * {?uri_exists pcp:derivedFrom ?picture . }} 
       BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
       
       OPTIONAL {?picture cpm:picture ?picture_url}.
