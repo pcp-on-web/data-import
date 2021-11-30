@@ -4,7 +4,7 @@ PREFIX data: <http://data.pcp-on-web.de/v.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
-PREFIX cpl: <http://catalogus-professorum.org/>
+PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 
 CONSTRUCT   {
@@ -20,6 +20,7 @@ CONSTRUCT   {
 ?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
+FROM cpl:
 WHERE {
  SELECT DISTINCT * {
   ?professor a cpm:Professor.
@@ -31,12 +32,9 @@ WHERE {
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
 
-      OPTIONAL {
-        SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
-          ?uri_exists pcp:derivedFrom ?picture .
-        }
-      }
+      OPTIONAL {?uri_exists pcp:derivedFrom ?picture . }
       BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
+      
       OPTIONAL {?picture cpm:picture ?picture_url}.
       OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
       OPTIONAL {?picture cpm:pictureKey ?picture_key}.
