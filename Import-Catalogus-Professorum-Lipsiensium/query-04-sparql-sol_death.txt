@@ -21,6 +21,7 @@ CONSTRUCT   {
 
 
 }
+WHERE {
 SELECT DISTINCT * WHERE {
   GRAPH cpl: {  
 
@@ -46,4 +47,5 @@ SELECT DISTINCT * WHERE {
 
     }
   }
+}
 }
