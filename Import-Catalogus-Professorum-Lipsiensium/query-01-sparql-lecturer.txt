@@ -43,14 +43,14 @@ CONSTRUCT   {
 #?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
-FROM cpl:
 WHERE {
-  SELECT DISTINCT * {
+  SELECT DISTINCT * FROM cpl: WHERE {
   # get all professors
   ?professor a cpm:Professor.
-  # generate new resource for lecture derived from this ?professor
-  BIND (IRI(REPLACE(str(?professor),'http://catalogus-professorum.org/',str(data:))) AS ?lecturer).
-
+  
+  OPTIONAL { SELECT DISTINCT * FROM data: WHERE { ?uri_exists pcp:derivedFrom ?professor . }} 
+  BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
+  
   #retreive basic properties from professor
   OPTIONAL {?professor rdfs:label ?label.}
   OPTIONAL {?professor cpm:note ?note.}
