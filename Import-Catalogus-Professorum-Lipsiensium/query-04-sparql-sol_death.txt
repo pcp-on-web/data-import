@@ -21,29 +21,27 @@ CONSTRUCT   {
 
 
 }
-WHERE { SELECT DISTINCT * {
-?professor a cpm:Professor.
-  # generate new resource for lecture derived from this ?professor
-  BIND (IRI(REPLACE(str(?professor),'http://catalogus-professorum.org/',str(data:))) AS ?lecturer).
-    #retrieve picture resources
+SELECT DISTINCT * WHERE {
+  GRAPH cpl: {  
+
+  # Get all professors from CPL catalog and assign a new ressource if new
+  ?professor a cpm:Professor.
+  OPTIONAL { GRAPH data: { ?uri_exists_1 pcp:derivedFrom ?professor . }} 
+  BIND (IF (BOUND(?uri_exists_1),?uri_exists_1,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
+
     OPTIONAL {
       ?professor cpm:hasPeriod ?period.
       ?period rdf:type cpm:Death.
-      OPTIONAL {
-        SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
-          ?uri_exists1 pcp:derivedFrom ?period .
-        }
-      }
-      BIND (IF (BOUND(?uri_exists1),?uri_exists1,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
+      OPTIONAL { GRAPH data: { ?uri_exists_2 pcp:derivedFrom ?period . }} 
+      BIND (IF (BOUND(?uri_exists_2),?uri_exists_2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
+
+
       OPTIONAL {?period cpm:date ?date.}
-      OPTIONAL {?period cpm:periodPlace ?place.
       OPTIONAL {
-        SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
-          ?uri_exists2 pcp:derivedFrom ?place .
-        }
-      }
-      BIND (IF (BOUND(?uri_exists2),?uri_exists2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_place)
-      OPTIONAL {?place rdfs:label ?place_label.}
+	      ?period cpm:periodPlace ?place.
+	      OPTIONAL { GRAPH data: { ?uri_exists_3 pcp:derivedFrom ?place . }} 
+      	      BIND (IF (BOUND(?uri_exists_3),?uri_exists_3,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_place)
+	      OPTIONAL {?place rdfs:label ?place_label.}
       }
 
     }
