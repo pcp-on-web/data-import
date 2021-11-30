@@ -6,7 +6,7 @@ PREFIX data: <http://data.pcp-on-web.de/v.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
-PREFIX cpl: <http://catalogus-professorum.org/>
+PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 
 CONSTRUCT   {
@@ -43,6 +43,7 @@ CONSTRUCT   {
 #?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
+FROM cpl:
 WHERE {
   SELECT DISTINCT * {
   # get all professors
