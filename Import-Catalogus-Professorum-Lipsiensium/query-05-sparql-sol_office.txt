@@ -1,41 +1,62 @@
+# Import Office
+
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX pcp: <http://pcp-on-web.de/ontology#>
 PREFIX data: <http://data.pcp-on-web.de/v.1/>
 PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
 PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
-PREFIX cpl: <http://catalogus-professorum.org/>
+PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 CONSTRUCT   {
 # Lecturer
 ?lecturer rdf:type pcp:Lecturer.
 ?lecturer pcp:hasStageOfLife ?uri_period.
-?uri_period rdf:type pcp:Death.
+?uri_period rdf:type ?office_type.
 ?uri_period pcp:derivedFrom ?period.
 ?uri_period pcp:date ?date.
-?uri_period pcp:stageOfLifeLocation ?place.
-?place rdfs:label ?place_label.
+?uri_period pcp:from ?from.
+?uri_period pcp:to ?to.
+?uri_period rdfs:label ?period_label.
+  
 
 }
-WHERE { SELECT DISTINCT * {
-?professor a cpm:Professor.
-  # generate new resource for lecture derived from this ?professor
-  BIND (IRI(REPLACE(str(?professor),'http://catalogus-professorum.org/',str(data:))) AS ?lecturer).
-    #retrieve picture resources
-    OPTIONAL {
-      ?professor cpm:hasPeriod ?period.
-      ?period rdf:type cpm:Death.
-      OPTIONAL {
-        SERVICE <https://workbench.pcp-on-web.de/store-oker/import-1/sparql> {
-          ?uri_exists pcp:derivedFrom ?period .
-        }
+WHERE {
+SELECT DISTINCT * WHERE {
+  GRAPH cpl: {  
+
+  # Get all professors from CPL catalog and assign a new ressource if new
+	?professor a cpm:Professor.
+    ?professor cpm:hasPeriod ?period.
+    ?period rdf:type cpm:Office.
+
+    OPTIONAL { GRAPH data: { ?uri_exists_1 pcp:derivedFrom ?professor . }} 
+    BIND (IF (BOUND(?uri_exists_1),?uri_exists_1,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
+
+    OPTIONAL { GRAPH data: { ?uri_exists_2 pcp:derivedFrom ?period . }} 
+    BIND (IF (BOUND(?uri_exists_2),?uri_exists_2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
+    
+    OPTIONAL {?period rdfs:label ?period_label.
+    BIND(
+            IF( contains(?period_label,"ekan"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"ektor"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"nstitut"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"irektor"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"rat"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"ommission"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"Senat"), pcp:AcademicOffice, 
+            IF( contains(?period_label,"eiter"), pcp:AcademicOffice, 
+            pcp:Office))))))))
+        AS ?office_type).  
+        
       }
-      BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
+
+        
       OPTIONAL {?period cpm:date ?date.}
-      OPTIONAL {?period cpm:periodPlace ?place.
-      OPTIONAL {?place rdfs:label ?place_label.}
-      }
+      OPTIONAL {?period cpm:from ?from.}
+      OPTIONAL {?period cpm:to ?to.}
 
     }
   }
 }
+

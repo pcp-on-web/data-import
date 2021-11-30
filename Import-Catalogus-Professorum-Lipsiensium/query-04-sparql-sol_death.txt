@@ -15,6 +15,7 @@ CONSTRUCT   {
 ?uri_period rdf:type pcp:Death.
 ?uri_period pcp:derivedFrom ?period.
 ?uri_period pcp:date ?date.
+?uri_period rdfs:label ?period_label.
 ?uri_period pcp:stageOfLifeLocation ?uri_place.
 ?uri_place rdfs:label ?place_label.
 ?uri_place pcp:derivedFrom ?place.
@@ -28,25 +29,24 @@ SELECT DISTINCT * WHERE {
 
   # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
+  ?professor cpm:hasPeriod ?period.
+  ?period rdf:type cpm:Death.
   OPTIONAL { GRAPH data: { ?uri_exists_1 pcp:derivedFrom ?professor . }} 
   BIND (IF (BOUND(?uri_exists_1),?uri_exists_1,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
 
-    OPTIONAL {
-      ?professor cpm:hasPeriod ?period.
-      ?period rdf:type cpm:Death.
-      OPTIONAL { GRAPH data: { ?uri_exists_2 pcp:derivedFrom ?period . }} 
-      BIND (IF (BOUND(?uri_exists_2),?uri_exists_2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
+  OPTIONAL { GRAPH data: { ?uri_exists_2 pcp:derivedFrom ?period . }} 
+  BIND (IF (BOUND(?uri_exists_2),?uri_exists_2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
 
 
-      OPTIONAL {?period cpm:date ?date.}
-      OPTIONAL {
+  OPTIONAL {?uri_period rdfs:label ?period_label.}
+  OPTIONAL {?period cpm:date ?date.}
+  OPTIONAL {
 	      ?period cpm:periodPlace ?place.
 	      OPTIONAL { GRAPH data: { ?uri_exists_3 pcp:derivedFrom ?place . }} 
       	      BIND (IF (BOUND(?uri_exists_3),?uri_exists_3,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_place)
 	      OPTIONAL {?place rdfs:label ?place_label.}
-      }
-
-    }
   }
-}
+
+  }
+ } 
 }
