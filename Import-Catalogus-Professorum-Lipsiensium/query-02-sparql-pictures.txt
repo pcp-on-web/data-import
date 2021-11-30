@@ -20,26 +20,27 @@ CONSTRUCT   {
 ?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
-FROM cpl:
 WHERE {
- SELECT DISTINCT * {
-  ?professor a cpm:Professor.
+  SELECT DISTINCT * WHERE {
+  GRAPH cpl: {  
 
-  # generate new resource for lecture derived from this ?professor
-  BIND (IRI(REPLACE(str(?professor),'http://catalogus-professorum.org/',str(data:))) AS ?lecturer).
+  # Get all professors from CPL catalog and assign a new ressource if new
+  ?professor a cpm:Professor.
+  OPTIONAL { GRAPH data: { ?uri_exists_1 pcp:derivedFrom ?professor . }} 
+  BIND (IF (BOUND(?uri_exists_1),?uri_exists_1,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
 
     #retrieve picture resources
     OPTIONAL {
       ?professor cpm:hasPicture ?picture.
 
-      #select from default graph
-      OPTIONAL { SELECT * {?uri_exists pcp:derivedFrom ?picture . }} 
-      BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
-      
+      OPTIONAL { GRAPH data: { ?uri_exists_2 pcp:derivedFrom ?picture . }} 
+      BIND (IF (BOUND(?uri_exists_2),?uri_exists_2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
+
       OPTIONAL {?picture cpm:picture ?picture_url}.
       OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.
       OPTIONAL {?picture cpm:pictureKey ?picture_key}.
 
     }
   }
+}
 }

@@ -44,12 +44,13 @@ CONSTRUCT   {
 
 }
 WHERE {
-  SELECT DISTINCT * FROM cpl: WHERE {
-  # get all professors
+  SELECT DISTINCT * WHERE {
+  GRAPH cpl: {  
+
+  # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
-  
-  OPTIONAL { SELECT DISTINCT * FROM data: WHERE { ?uri_exists pcp:derivedFrom ?professor . }} 
-  BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
+  OPTIONAL { GRAPH data: { ?uri_exists pcp:derivedFrom ?professor . }} 
+  BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
   
   #retreive basic properties from professor
   OPTIONAL {?professor rdfs:label ?label.}
@@ -92,6 +93,6 @@ WHERE {
 
     FILTER isIRI(?gnd).
     }
-
+    }
   }
 }
