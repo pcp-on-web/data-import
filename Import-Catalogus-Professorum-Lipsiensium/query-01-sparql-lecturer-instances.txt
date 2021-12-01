@@ -17,7 +17,7 @@ CONSTRUCT   {
 
 }
 WHERE {
-  SELECT DISTINCT * WHERE {
+  SELECT DISTINCT ?professor ?lecturer WHERE {
   GRAPH cpl: {  
 
   # Get all professors from CPL catalog and assign a new ressource if new

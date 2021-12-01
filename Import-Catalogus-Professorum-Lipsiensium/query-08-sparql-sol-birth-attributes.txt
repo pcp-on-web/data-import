@@ -1,4 +1,4 @@
-# Import death attributes of lecturer
+# Import birth of lecturer
 
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX pcp: <http://pcp-on-web.de/ontology#>
@@ -10,8 +10,11 @@ PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 CONSTRUCT   {
 # Lecturer
+
+?lecture pcp:hasStageOfLife ?uri_period .
 ?uri_period pcp:date ?date.
 ?uri_period rdfs:label ?period_label.
+?uri_period pcp:stageOfLifeLocation ?uri_pcp_location.
 
 }
 WHERE {
@@ -20,12 +23,16 @@ WHERE {
 
   ?professor a cpm:Professor.
   ?professor cpm:hasPeriod ?period.
-  ?period rdf:type cpm:Death.
+  ?period rdf:type cpm:Birth.
 
   GRAPH data: { ?uri_period pcp:derivedFrom ?period . }
+  GRAPH data: { ?lecturer pcp:derivedFrom ?professor . }
 
   OPTIONAL {?period rdfs:label ?period_label.}
   OPTIONAL {?period cpm:date ?date.}
+  OPTIONAL {?period cpm:periodPlace ?place.}
+
+  GRAPH data: { ?uri_pcp_location pcp:derivedFrom ?place . }
 
     }
   }

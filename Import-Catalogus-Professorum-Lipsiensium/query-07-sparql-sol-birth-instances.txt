@@ -9,25 +9,24 @@ PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
 PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 CONSTRUCT   {
-# Lecturer
-?uri_period pcp:date ?date.
-?uri_period rdfs:label ?period_label.
-
+?uri_period rdf:type pcp:Birth.
+?uri_period pcp:derivedFrom ?period.
 }
 WHERE {
-  SELECT DISTINCT * WHERE {
+
+  SELECT DISTINCT ?uri_period ?period. WHERE {
   GRAPH cpl: {  
 
+  # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
   ?professor cpm:hasPeriod ?period.
   ?period rdf:type cpm:Birth.
 
-  GRAPH data: { ?uri_period pcp:derivedFrom ?period . }
-
-  OPTIONAL {?period rdfs:label ?period_label.}
-  OPTIONAL {?period cpm:date ?date.}
-
+  OPTIONAL { SELECT DISTINCT * WHERE {GRAPH data: { ?uri_exists pcp:derivedFrom ?period . }}}
+  BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_period)
     }
   }
 }
+
+
 

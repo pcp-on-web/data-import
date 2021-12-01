@@ -11,21 +11,22 @@ PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 CONSTRUCT   {
 
-?uri_pcp_picture pcp:derivedFrom ?picture .
-?uri_pcp_picture rdf:type pcp:Picture.
+?uri_pcp_location rdfs:label ?place_label .
 
 }
 WHERE {
-  SELECT DISTINCT ?uri_pcp_picture ?picture WHERE {
+  SELECT DISTINCT ?uri_pcp_location ?place_label .
+ WHERE {
   GRAPH cpl: {  
 
-  # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
-  ?professor cpm:hasPicture ?picture.
+  ?professor cpm:hasPeriod ?period.
+  ?period cpm:periodPlace ?place.
 
-  OPTIONAL { SELECT DISTINCT * WHERE {GRAPH data: { ?uri_exists pcp:derivedFrom ?picture . }}}
-  BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
+  GRAPH data: { ?uri_pcp_location pcp:derivedFrom ?place . }
+  OPTIONAL {?place rdfs:label ?place_label}.
 
     }
   }
 }
+

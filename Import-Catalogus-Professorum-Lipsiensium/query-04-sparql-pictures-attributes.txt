@@ -10,7 +10,7 @@ PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 
 CONSTRUCT   {
-
+?lecturer pcp:relatedDocument ?uri_pcp_picture.
 ?uri_pcp_picture pcp:pictureURL ?picture_url.
 ?uri_pcp_picture pcp:pictureArchive ?picture_archive.
 ?uri_pcp_picture pcp:pictureKey ?picture_key.
@@ -23,6 +23,8 @@ WHERE {
   # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
   ?professor cpm:hasPicture ?picture.
+  
+  GRAPH data: { ?lecturer pcp:derivedFrom ?professor . }
   GRAPH data: { ?uri_pcp_picture pcp:derivedFrom ?picture . }
 
   OPTIONAL {?picture cpm:picture ?picture_url}.
