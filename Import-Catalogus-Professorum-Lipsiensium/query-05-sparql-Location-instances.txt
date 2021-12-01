@@ -1,4 +1,4 @@
-# Import lOCATIONS related to periods
+# Import Locations related to periods
 
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
 PREFIX pcp: <http://pcp-on-web.de/ontology#>
@@ -11,20 +11,20 @@ PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 CONSTRUCT   {
 
-?uri_pcp_location pcp:derivedFrom ?place .
-?uri_pcp_location rdf:type ?location_type.
+?uri_location pcp:derivedFrom ?place .
+?uri_location rdf:type ?location_type.
 
 }
 WHERE {
-  SELECT DISTINCT ?uri_pcp_location ?place ?location_type WHERE {
+  SELECT DISTINCT ?uri_location ?place ?location_type WHERE {
   GRAPH cpl: {  
 
   ?professor a cpm:Professor.
   ?professor cpm:hasPeriod ?period.
   ?period cpm:periodPlace ?place.
-  ?place rdf:type ?locations_type.
+  ?place rdf:type ?location_type.
   
-  OPTIONAL { SELECT DISTINCT * WHERE {GRAPH data: { ?uri_exists pcp:derivedFrom ?place . }}}
+  OPTIONAL {GRAPH data: { ?uri_exists pcp:derivedFrom ?place . }}
   BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_location)
 
     }
