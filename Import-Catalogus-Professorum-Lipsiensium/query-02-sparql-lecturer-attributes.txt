@@ -1,0 +1,88 @@
+# Import Lecturer and general attributes
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX pcp: <http://pcp-on-web.de/ontology#>
+PREFIX data: <http://data.pcp-on-web.de/v.1/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
+PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
+
+
+CONSTRUCT   {
+
+# Lecturer
+?lecturer pcp:gnd ?gnd.
+?lecturer rdfs:label ?label .
+?lecturer pcp:note ?note .
+?lecturer pcp:furtherInformation ?furtherInformation .
+?lecturer pcp:additionToSurname ?additionToSurname .
+?lecturer pcp:alternativeWritingOfSurname ?alternativeWritingOfSurname .
+?lecturer pcp:forename ?forename .
+?lecturer pcp:surname ?surname .
+?lecturer rdfs:seeAlso ?webLink .
+?lecturer rdfs:seeAlso ?seeAlso .
+?lecturer rdfs:seeAlso ?lectureLink .
+
+#  ?lecturer pcp:idPerson ?idPerson .
+#  ?lecturer pcp:birthname ?birthname .
+#  ?lecturer pcp:corresponds ?corresponds .
+#  ?lecturer pcp:hasEnrollment ?hasEnrollment .
+#  ?lecturer pcp:hasOrigin ?hasOrigin .
+#  ?lecturer pcp:isAttributedTo ?isAttributedTo .
+#  ?lecturer pcp:latinForename ?latinForename .
+#  ?lecturer pcp:latinSurname ?latinSurname .
+
+}
+WHERE {
+  SELECT DISTINCT * WHERE {
+  GRAPH cpl: {  
+
+  # Get all professors from CPL catalog and assign a new ressource if new
+  ?professor a cpm:Professor.
+  GRAPH data: { ?lecturer pcp:derivedFrom ?professor . }
+  
+  #retreive basic properties from professor
+  OPTIONAL {?professor rdfs:label ?label.}
+  OPTIONAL {?professor cpm:note ?note.}
+  OPTIONAL {?professor cpm:furtherInformation ?furtherInformation.}
+  OPTIONAL {?professor cpm:webLink ?webLink.}
+  OPTIONAL {?professor rdfs:seeAlso ?seeAlso.}
+  OPTIONAL {?professor cpm:forename ?forename.}
+  OPTIONAL {?professor cpm:surname ?surname.}
+  OPTIONAL {?professor cpm:references ?references.}
+  OPTIONAL {?professor cpm:literature ?literature.}
+  OPTIONAL {?professor cpm:alternativeWritingOfSurname ?alternativeWritingOfSurname.}
+
+  #Link to lecture repository / Vorlesungsverzeichnis
+  OPTIONAL {?professor cpm:lectureLink ?lectureLink.}
+
+  #Not used vasic properties
+  #OPTIONAL {?professor cpm:denomination ?denomination.}
+  #OPTIONAL {?professor cpm:fullAcademicalTitle ?fullAcademicalTitle.}
+  #OPTIONAL {?professor cpm:firstName ?firstName.}
+  #OPTIONAL {?professor cpm:additionToSurname ?additionToSurname.}
+  #OPTIONAL {?professor cpm:isTutor ?isTutor.}
+  #OPTIONAL {?professor cpm:profession ?profession.}
+  #OPTIONAL {?professor cpm:published ?published.}
+
+  #retrieve gnd and convert to IRI
+  OPTIONAL {
+    ?professor cpm:gnd ?gnd_source.
+    BIND(
+      IF ( contains(?gnd_source,"http"),
+
+           IRI(REPLACE(str(?gnd_source),'http://','https://')),
+
+           IF ( contains(?gnd_source," "),
+
+              IF (contains(?gnd_source,"(DNB)"),
+                IRI(CONCAT("https://d-nb.info/gnd/",REPLACE(?gnd_source," \\(DNB\\)",""))),
+          ""),
+            IRI(CONCAT("https://d-nb.info/gnd/",?gnd_source)))) as ?gnd ).
+
+    FILTER isIRI(?gnd).
+    }
+    }
+  }
+}

@@ -11,15 +11,9 @@ PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
 
 CONSTRUCT   {
 
-# Lecturer
-?lecturer rdf:type pcp:Lecturer.
-
-?lecturer pcp:relatedDocument ?uri_pcp_picture.
-?uri_pcp_picture rdf:type pcp:Picture.
 ?uri_pcp_picture pcp:pictureURL ?picture_url.
 ?uri_pcp_picture pcp:pictureArchive ?picture_archive.
 ?uri_pcp_picture pcp:pictureKey ?picture_key.
-?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
 WHERE {
@@ -29,12 +23,7 @@ WHERE {
   # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
   ?professor cpm:hasPicture ?picture.
-
-  OPTIONAL { GRAPH data: { ?uri_exists_1 pcp:derivedFrom ?professor . }} 
-  BIND (IF (BOUND(?uri_exists_1),?uri_exists_1,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
-
-  OPTIONAL { GRAPH data: { ?uri_exists_2 pcp:derivedFrom ?picture . }} 
-  BIND (IF (BOUND(?uri_exists_2),?uri_exists_2,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_pcp_picture)
+  GRAPH data: { ?uri_pcp_picture pcp:derivedFrom ?picture . }
 
   OPTIONAL {?picture cpm:picture ?picture_url}.
   OPTIONAL {?picture cpm:pictureArchive ?picture_archive}.

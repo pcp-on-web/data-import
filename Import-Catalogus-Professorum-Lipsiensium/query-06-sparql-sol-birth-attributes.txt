@@ -1,0 +1,33 @@
+# Import birth of lecturer
+
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX pcp: <http://pcp-on-web.de/ontology#>
+PREFIX data: <http://data.pcp-on-web.de/v.1/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX cpm: <http://catalogus-professorum.org/cpm/2/>
+PREFIX cpl: <http://catalogus-professorum.org/lipsiensium/>
+
+CONSTRUCT   {
+# Lecturer
+?uri_period pcp:date ?date.
+?uri_period rdfs:label ?period_label.
+
+}
+WHERE {
+  SELECT DISTINCT * WHERE {
+  GRAPH cpl: {  
+
+  ?professor a cpm:Professor.
+  ?professor cpm:hasPeriod ?period.
+  ?period rdf:type cpm:Birth.
+
+  GRAPH data: { ?uri_period pcp:derivedFrom ?period . }
+
+  OPTIONAL {?period rdfs:label ?period_label.}
+  OPTIONAL {?period cpm:date ?date.}
+
+    }
+  }
+}
+
