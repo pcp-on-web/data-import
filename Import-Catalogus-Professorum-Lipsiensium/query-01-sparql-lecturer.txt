@@ -14,33 +14,6 @@ CONSTRUCT   {
 # Lecturer
 ?lecturer rdf:type pcp:Lecturer.
 ?lecturer pcp:derivedFrom ?professor.
-?lecturer pcp:gnd ?gnd.
-?lecturer rdfs:label ?label .
-?lecturer pcp:note ?note .
-?lecturer pcp:furtherInformation ?furtherInformation .
-?lecturer pcp:additionToSurname ?additionToSurname .
-?lecturer pcp:alternativeWritingOfSurname ?alternativeWritingOfSurname .
-?lecturer pcp:forename ?forename .
-?lecturer pcp:surname ?surname .
-?lecturer rdfs:seeAlso ?webLink .
-?lecturer rdfs:seeAlso ?seeAlso .
-?lecturer rdfs:seeAlso ?lectureLink .
-
-#  ?lecturer pcp:idPerson ?idPerson .
-#  ?lecturer pcp:birthname ?birthname .
-#  ?lecturer pcp:corresponds ?corresponds .
-#  ?lecturer pcp:hasEnrollment ?hasEnrollment .
-#  ?lecturer pcp:hasOrigin ?hasOrigin .
-#  ?lecturer pcp:isAttributedTo ?isAttributedTo .
-#  ?lecturer pcp:latinForename ?latinForename .
-#  ?lecturer pcp:latinSurname ?latinSurname .
-
-?lecturer pcp:relatedDocument ?uri_pcp_picture.
-?uri_pcp_picture rdf:type pcp:Picture;
-#?uri_pcp_picture pcp:pictureURL ?picture_url.
-#?uri_pcp_picture pcp:pictureArchive ?picture_pictureArchive.
-#?uri_pcp_picture pcp:pictureKey ?picture_pictureKey.
-#?uri_pcp_picture pcp:derivedFrom ?picture.
 
 }
 WHERE {
@@ -49,50 +22,8 @@ WHERE {
 
   # Get all professors from CPL catalog and assign a new ressource if new
   ?professor a cpm:Professor.
-  OPTIONAL { GRAPH data: { ?uri_exists pcp:derivedFrom ?professor . }} 
+  OPTIONAL { SELECT DISTINCT * WHERE {GRAPH data: { ?uri_exists pcp:derivedFrom ?professor . }}}
   BIND (IF (BOUND(?uri_exists),?uri_exists,IRI(CONCAT(str(data:), strUUID()))) AS ?lecturer)
-  
-  #retreive basic properties from professor
-  OPTIONAL {?professor rdfs:label ?label.}
-  OPTIONAL {?professor cpm:note ?note.}
-  OPTIONAL {?professor cpm:furtherInformation ?furtherInformation.}
-  OPTIONAL {?professor cpm:webLink ?webLink.}
-  OPTIONAL {?professor rdfs:seeAlso ?seeAlso.}
-  OPTIONAL {?professor cpm:forename ?forename.}
-  OPTIONAL {?professor cpm:surname ?surname.}
-  OPTIONAL {?professor cpm:references ?references.}
-  OPTIONAL {?professor cpm:literature ?literature.}
-  OPTIONAL {?professor cpm:alternativeWritingOfSurname ?alternativeWritingOfSurname.}
-
-  #Link to lecture repository / Vorlesungsverzeichnis
-  OPTIONAL {?professor cpm:lectureLink ?lectureLink.}
-
-  #Not used vasic properties
-  #OPTIONAL {?professor cpm:denomination ?denomination.}
-  #OPTIONAL {?professor cpm:fullAcademicalTitle ?fullAcademicalTitle.}
-  #OPTIONAL {?professor cpm:firstName ?firstName.}
-  #OPTIONAL {?professor cpm:additionToSurname ?additionToSurname.}
-  #OPTIONAL {?professor cpm:isTutor ?isTutor.}
-  #OPTIONAL {?professor cpm:profession ?profession.}
-  #OPTIONAL {?professor cpm:published ?published.}
-
-  #retrieve gnd and convert to IRI
-  OPTIONAL {
-    ?professor cpm:gnd ?gnd_source.
-    BIND(
-      IF ( contains(?gnd_source,"http"),
-
-           IRI(REPLACE(str(?gnd_source),'http://','https://')),
-
-           IF ( contains(?gnd_source," "),
-
-              IF (contains(?gnd_source,"(DNB)"),
-                IRI(CONCAT("https://d-nb.info/gnd/",REPLACE(?gnd_source," \\(DNB\\)",""))),
-          ""),
-            IRI(CONCAT("https://d-nb.info/gnd/",?gnd_source)))) as ?gnd ).
-
-    FILTER isIRI(?gnd).
-    }
-    }
+   }
   }
 }
