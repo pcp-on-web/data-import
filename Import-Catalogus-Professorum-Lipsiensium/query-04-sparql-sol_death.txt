@@ -16,10 +16,6 @@ CONSTRUCT   {
 ?uri_period pcp:derivedFrom ?period.
 ?uri_period pcp:date ?date.
 ?uri_period rdfs:label ?period_label.
-?uri_period pcp:stageOfLifeLocation ?uri_place.
-?uri_place rdfs:label ?place_label.
-?uri_place pcp:derivedFrom ?place.
-?uri_place rdf:type pcp:Location.
 
 
 }
@@ -40,12 +36,6 @@ SELECT DISTINCT * WHERE {
 
   OPTIONAL {?uri_period rdfs:label ?period_label.}
   OPTIONAL {?period cpm:date ?date.}
-  OPTIONAL {
-	      ?period cpm:periodPlace ?place.
-	      OPTIONAL { GRAPH data: { ?uri_exists_3 pcp:derivedFrom ?place . }} 
-      	      BIND (IF (BOUND(?uri_exists_3),?uri_exists_3,IRI(CONCAT(str(data:), strUUID()))) AS ?uri_place)
-	      OPTIONAL {?place rdfs:label ?place_label.}
-  }
 
   }
  } 
